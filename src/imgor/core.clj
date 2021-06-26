@@ -29,14 +29,25 @@
    :headers {"Content-Type" "text/html"}
    :body    (slurp "resources/index.html")})
 
+(defn temp-file-path
+  [req]
+  (:path (bean (get-in req [:params :file :tempfile]))))
+
+(defn upload-destination-path
+  [req]
+  (str "resources/public/uploads/" (get-in req [:params :file :filename])))
+
+(defn public-uploads-path
+  [req]
+  (str "/uploads/" (get-in req [:params :file :filename])))
+
 (defn upload-handler [req]
-  (let [tmpfilepath (:path (bean (get-in req [:params :file :tempfile])))
-        custom-path (str "resources/public/uploads/" (get-in req [:params :file :filename]))]
+  (let [custom-path (upload-destination-path req)]
   (do
-    (io/copy (io/file tmpfilepath) (io/file custom-path))
+    (io/copy (io/file (temp-file-path req)) (io/file custom-path))
     {:status 200
      :headers  {"Content-Type" "text/html"}
-     :body (str "File now available for download at: http://localhost:3000/" custom-path)})))
+     :body (str "File now available for download at: http://localhost:3000" (public-uploads-path req))})))
 
 (defroutes app-routes
   (GET "/" [] index-handler)
@@ -51,5 +62,3 @@
       (server/run-server (wrap-defaults #'app-routes server-config) {:port port})
       (println "Server started on port" port)
       )))
-    ; Run the server with Ring.defaults middleware
-    
