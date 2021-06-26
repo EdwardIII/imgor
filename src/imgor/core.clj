@@ -5,6 +5,7 @@
             [ring.middleware.defaults :refer :all]
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.multipart-params :refer [wrap-multipart-params]]
+            [ring.middleware.reload :refer [wrap-reload]]
             [ring.util.anti-forgery :refer [anti-forgery-field]]
             [clojure.pprint :as pp]
             [clojure.string :as str]
@@ -19,7 +20,6 @@
      :keywordize true},
      :cookies false,
      :session {:flash true, :cookie-attrs {:http-only true, :same-site :strict}},
-      ; TODO: enable anti-forgery and xss-protection
      :security {:anti-forgery true, :xss-protection {:enable? true, :mode :block}, :frame-options :sameorigin, :content-type-options :nosniff},
      :static {:resources "public"},
      :responses {:not-modified-responses true, :absolute-redirects true, :content-types true, :default-charset "utf-8"}})
@@ -59,11 +59,15 @@
   (POST "/" [] upload-handler)
   (route/not-found "Error, page not found!"))
 
+; TODO: only reload in dev mode
+(def reloadable-routes
+  (wrap-reload #'app-routes))
+
 (defn -main
   "Upload images to share on the web"
   [& args]
   (let [port (Integer/parseInt (or (System/getenv "PORT") "3000"))]
     (do
-      (server/run-server (wrap-defaults #'app-routes server-config) {:port port})
+      (server/run-server (wrap-defaults reloadable-routes server-config) {:port port})
       (println "Server started on port" port)
       )))

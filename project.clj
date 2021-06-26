@@ -13,7 +13,11 @@
                  [ring/ring-defaults "0.3.3"]
                  ; Clojure data.JSON library
                  [org.clojure/data.json "0.2.6"]
-                 [org.clojure/clojurescript "1.10.866"]]
+                 [org.clojure/clojurescript "1.10.866"]
+
+                 ; TODO: split into dev deps
+                 [ring/ring-devel "1.8.0"]
+                 ]
   :main ^:skip-aot imgor.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all
