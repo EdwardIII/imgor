@@ -12,6 +12,6 @@ pom.xml.asc
 .hgignore
 .hg/
 
-resources/uploads/
-!resources/uploads/.gitkeep
+resources/public/uploads/
+!resources/public/uploads/.gitkeep
 

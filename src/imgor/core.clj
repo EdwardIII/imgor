@@ -23,24 +23,24 @@
      :static {:resources "public"},
      :responses {:not-modified-responses true, :absolute-redirects true, :content-types true, :default-charset "utf-8"}})
 
-(defn save-file [req]
-  (let [tmpfilepath (:path (bean (get-in req [:params :file :tempfile])))
-        custom-path "resources/uploads/file.png"]
-  (do
-    (io/copy (io/file tmpfilepath) (io/file custom-path))
-    {:status 200
-     :headers  {"Content-Type" "text/html"}
-     :body (str "File now available for download at: http://localhost:3000/" custom-path)})))
-
 (defn index-handler
   [_]
   {:status 200
    :headers {"Content-Type" "text/html"}
    :body    (slurp "resources/index.html")})
 
+(defn upload-handler [req]
+  (let [tmpfilepath (:path (bean (get-in req [:params :file :tempfile])))
+        custom-path (str "resources/uploads/" (get-in req [:params :file :filename]))]
+  (do
+    (io/copy (io/file tmpfilepath) (io/file custom-path))
+    {:status 200
+     :headers  {"Content-Type" "text/html"}
+     :body (str "File now available for download at: http://localhost:3000/" custom-path)})))
+
 (defroutes app-routes
   (GET "/" [] index-handler)
-  (POST "/" [] save-file)
+  (POST "/" [] upload-handler)
   (route/not-found "Error, page not found!"))
 
 (defn -main
