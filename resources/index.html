@@ -1,12 +1,17 @@
 <!DOCTYPE html>
 <html>
-<head>
-<title>Imgor</title>
-</head>
-<body>
+  <head>
+    <title>Imgor</title>
+  </head>
+  <body>
 
-<h1>Upload your image</h1>
-<p>Drag it here</p>
+    <h1>Upload your image</h1>
+    <p>Drag it here</p>
 
-</body>
+    <form method="post" enctype="multipart/form-data">
+      <input name="file" type="file">
+      <input type="submit" value="Upload Now">
+    </form>
+
+  </body>
 </html>
