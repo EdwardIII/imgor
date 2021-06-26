@@ -29,7 +29,7 @@
   (format (slurp "resources/index.html") (anti-forgery-field)))
 
 (defn index-handler
-  []
+  [_]
   {:status 200
    :headers {"Content-Type" "text/html"}
    :body    (index-template)})

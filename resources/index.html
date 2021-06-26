@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>Imgor</title>
+    <script src="/javascripts/main.js"></script>
   </head>
   <body>
 
@@ -9,7 +10,7 @@
     <p>Drag it here</p>
 
     <form method="post" enctype="multipart/form-data">
-      <!-- csrf token -->
+      <!-- csrf token hidden field -->
       %s
       <input name="file" type="file">
       <input type="submit" value="Upload Now">

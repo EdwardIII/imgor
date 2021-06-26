@@ -12,8 +12,20 @@
                  ; Ring defaults - for query params etc
                  [ring/ring-defaults "0.3.3"]
                  ; Clojure data.JSON library
-                 [org.clojure/data.json "0.2.6"]]
+                 [org.clojure/data.json "0.2.6"]
+                 [org.clojure/clojurescript "1.9.521"]]
   :main ^:skip-aot imgor.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all
-                       :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}})
+                       :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}}
+
+
+  :cljsbuild {
+    :builds [{
+        :source-paths ["src"]
+        :compiler {
+          :output-to "resources/public/javascripts/main.js"  ; default: target/cljsbuild-main.js
+          :optimizations :whitespace
+          :pretty-print true}}]}
+  :plugins [[lein-cljsbuild "1.1.8"]])
+
