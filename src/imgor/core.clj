@@ -18,7 +18,7 @@
      :keywordize true},
      :cookies false,
      :session {:flash true, :cookie-attrs {:http-only true, :same-site :strict}},
-    ; TODO: enable anti-forgery and xss-protection
+      ; TODO: enable anti-forgery and xss-protection
      :security {:anti-forgery false, :xss-protection {:enable? false, :mode :block}, :frame-options :sameorigin, :content-type-options :nosniff},
      :static {:resources "public"},
      :responses {:not-modified-responses true, :absolute-redirects true, :content-types true, :default-charset "utf-8"}})
@@ -31,7 +31,7 @@
 
 (defn upload-handler [req]
   (let [tmpfilepath (:path (bean (get-in req [:params :file :tempfile])))
-        custom-path (str "resources/uploads/" (get-in req [:params :file :filename]))]
+        custom-path (str "resources/public/uploads/" (get-in req [:params :file :filename]))]
   (do
     (io/copy (io/file tmpfilepath) (io/file custom-path))
     {:status 200
