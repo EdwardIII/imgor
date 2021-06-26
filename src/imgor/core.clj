@@ -5,6 +5,7 @@
             [ring.middleware.defaults :refer :all]
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.multipart-params :refer [wrap-multipart-params]]
+            [ring.util.anti-forgery :refer [anti-forgery-field]]
             [clojure.pprint :as pp]
             [clojure.string :as str]
             [clojure.data.json :as json]
@@ -19,15 +20,19 @@
      :cookies false,
      :session {:flash true, :cookie-attrs {:http-only true, :same-site :strict}},
       ; TODO: enable anti-forgery and xss-protection
-     :security {:anti-forgery false, :xss-protection {:enable? false, :mode :block}, :frame-options :sameorigin, :content-type-options :nosniff},
+     :security {:anti-forgery true, :xss-protection {:enable? true, :mode :block}, :frame-options :sameorigin, :content-type-options :nosniff},
      :static {:resources "public"},
      :responses {:not-modified-responses true, :absolute-redirects true, :content-types true, :default-charset "utf-8"}})
 
+(defn index-template
+  []
+  (format (slurp "resources/index.html") (anti-forgery-field)))
+
 (defn index-handler
-  [_]
+  []
   {:status 200
    :headers {"Content-Type" "text/html"}
-   :body    (slurp "resources/index.html")})
+   :body    (index-template)})
 
 (defn temp-file-path
   [req]
