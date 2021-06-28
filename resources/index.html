@@ -3,13 +3,15 @@
   <head>
     <title>Imgor</title>
     <script src="/javascripts/main.js"></script>
+    <link href="/main.css" rel="stylesheet">
   </head>
   <body>
 
     <h1>Upload your image</h1>
     <p>Drag it here</p>
 
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data" class="upload-area">
+      <p>Drag your file here to upload it</p>
       <!-- csrf token hidden field -->
       %s
       <input name="file" type="file">
