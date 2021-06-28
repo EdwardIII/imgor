@@ -1,4 +1,4 @@
-(defproject imgor "0.1.0-SNAPSHOT"
+(defproject imjur "0.1.0-SNAPSHOT"
   :description "Share images on the web"
   :url "https://edwardiii.co.uk"
   :license {:name "EPL-2.0 OR GPL-2.0-or-later WITH Classpath-exception-2.0"
@@ -18,7 +18,7 @@
                  ; TODO: split into dev deps
                  [ring/ring-devel "1.8.0"]
                  ]
-  :main ^:skip-aot imgor.core
+  :main ^:skip-aot imjur.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all
                        :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}}

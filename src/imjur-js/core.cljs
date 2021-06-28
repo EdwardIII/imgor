@@ -1,4 +1,4 @@
-(ns imgor-js.core
+(ns imjur-js.core
   (:require [goog.events :as gevents]
             [goog.dom :as gdom]
             ))

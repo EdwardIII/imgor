@@ -1,4 +1,4 @@
-# imgor
+# imjur
 
 FIXME: description
 
@@ -10,7 +10,7 @@ Download from http://example.com/FIXME.
 
 FIXME: explanation
 
-    $ java -jar imgor-0.1.0-standalone.jar [args]
+    $ java -jar imjur-0.1.0-standalone.jar [args]
 
 ## Options
 

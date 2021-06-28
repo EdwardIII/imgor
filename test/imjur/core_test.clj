@@ -1,6 +1,6 @@
-(ns imgor.core-test
+(ns imjur.core-test
   (:require [clojure.test :refer :all]
-            [imgor.core :refer :all]))
+            [imjur.core :refer :all]))
 
 (deftest a-test
   (testing "FIXME, I fail."
