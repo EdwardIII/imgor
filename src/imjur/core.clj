@@ -63,11 +63,16 @@
 (def reloadable-routes
   (wrap-reload #'app-routes))
 
+(def choose-routes
+  "Choose between auto-reloading when code changes, or not. default: Production, no auto-reloading"
+  (let [env (or (System/getenv "IMJUR_ENV") "production")]
+    (if (= env "production") #'app-routes #'reloadable-routes)))
+
 (defn -main
   "Upload images to share on the web"
   [& args]
   (let [port (Integer/parseInt (or (System/getenv "PORT") "3000"))]
     (do
-      (server/run-server (wrap-defaults reloadable-routes server-config) {:port port})
+      (server/run-server (wrap-defaults choose-routes server-config) {:port port})
       (println "Server started on port" port)
       )))
