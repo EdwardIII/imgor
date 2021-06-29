@@ -25,6 +25,7 @@
      :responses {:not-modified-responses true, :absolute-redirects true, :content-types true, :default-charset "utf-8"}})
 
 (defn index-template
+  "Render index template"
   []
   (format (slurp "resources/index.html") (anti-forgery-field)))
 
@@ -35,18 +36,22 @@
    :body    (index-template)})
 
 (defn temp-file-path
+  "Get the temporary path of an uploaded file on disk"
   [req]
   (:path (bean (get-in req [:params :file :tempfile]))))
 
 (defn upload-destination-path
+  "The path on disk where uploads get saved to"
   [req]
   (str "resources/public/uploads/" (get-in req [:params :file :filename])))
 
 (defn public-uploads-path
+  "The directory where uploads will be accessible over the web"
   [req]
   (str "/uploads/" (get-in req [:params :file :filename])))
 
 (defn upload-handler [req]
+  "Save the uploaded file to disk"
   (let [custom-path (upload-destination-path req)]
   (do
     (io/copy (io/file (temp-file-path req)) (io/file custom-path))
@@ -59,8 +64,8 @@
   (POST "/" [] upload-handler)
   (route/not-found "Error, page not found!"))
 
-; TODO: only reload in dev mode
 (def reloadable-routes
+  "Reload application if files are changed"
   (wrap-reload #'app-routes))
 
 (def choose-routes
