@@ -1,19 +1,19 @@
 (ns imjur-js.core
   (:require [goog.events :as gevents]
             [goog.dom :as gdom]
-            ))
+            [goog.dom.classlist :as gcss]))
 
-(def upload-area (.querySelector js/document ".upload-area"))
+(defn get-upload-area [] (gdom/getElementByClass "upload-area"))
 
 (defn on-hover
   [e]
-  (gdom/setProperties upload-area #js {"class" "highlight"})) 
+  (gcss/toggle (get-upload-area) "highlight"))
 
 
 (defn main
   []
-  (println upload-area)
-  (gevents/listen upload-area "keyup" 'on-hover))
+  (gevents/listen (get-upload-area) "mouseenter" on-hover)
+  (gevents/listen (get-upload-area) "mouseleave" on-hover))
 
 (.addEventListener
   js/window

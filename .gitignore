@@ -14,5 +14,4 @@ pom.xml.asc
 
 resources/public/uploads/
 !resources/public/uploads/.gitkeep
-resources/public/javascripts/main.js
-
+resources/public/javascripts/

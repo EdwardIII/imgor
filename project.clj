@@ -27,8 +27,10 @@
     :builds [{
         :source-paths ["src"]
         :compiler {
-          :output-to "resources/public/javascripts/main.js"  ; default: target/cljsbuild-main.js
+          :output-to "resources/public/javascripts/main.js"
+          :output-dir "resources/public/javascripts/"
           :optimizations :whitespace
-          :pretty-print true}}]}
+          :pretty-print true
+          :source-map "resources/public/javascripts/main.js.map"}}]}
   :plugins [[lein-cljsbuild "1.1.8"]])
 
