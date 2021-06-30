@@ -4,7 +4,8 @@
             [goog.dom.classlist :as gcss]
 
             [cljs-http.client :as http]
-            [cljs.core.async :refer [<!]]))
+            [cljs.core.async :refer [<!]]
+            [imjur-js.dom :refer [by-css listen]]))
 
 (def upload (atom {:file nil
                    :csrf-token nil}))
@@ -17,17 +18,8 @@
                                                       ["file" (upload-request :file)]]}))])))
 (add-watch upload :file uploader)
 
-(defn by-css
-  [selector]
-  "Get single dom element by selector"
-  (.querySelector js/document selector))
-
 (defn get-upload-area [] (by-css ".upload-area"))
 (defn get-csrf-token [] (.-value (by-css "#__anti-forgery-token")))
-
-(defn listen
-  [element event-name handler]
-  (.addEventListener element event-name handler false))
 
 (defn prevent-defaults
   [e]
@@ -49,6 +41,7 @@
   "Upload the dropped file"
   [e]
   (prevent-defaults e)
+  (on-hover e)
   (reset! upload {:file (file-from-drag e) :csrf-token (get-csrf-token)}))
 
 (defn main
@@ -58,10 +51,10 @@
 
   (listen (get-upload-area) "dragenter" on-hover)
   (listen (get-upload-area) "dragleave" on-hover)
-  (listen (get-upload-area) "drop" on-drop)
-)
 
-(.addEventListener
+  (listen (get-upload-area) "drop" on-drop))
+
+(listen
   js/window
   "DOMContentLoaded"
-  (fn [] (main)))
+  main)
