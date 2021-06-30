@@ -14,10 +14,11 @@
                  ; Clojure data.JSON library
                  [org.clojure/data.json "0.2.6"]
                  [org.clojure/clojurescript "1.10.866"]
+                 [cljs-http "0.1.46"]
 
                  ; TODO: split into dev deps
-                 [ring/ring-devel "1.8.0"]
-                 ]
+                 [ring/ring-devel "1.8.0"]]
+
   :main ^:skip-aot imjur.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all
@@ -33,4 +34,3 @@
           :pretty-print true
           :source-map "resources/public/javascripts/main.js.map"}}]}
   :plugins [[lein-cljsbuild "1.1.8"]])
-

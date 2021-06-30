@@ -8,16 +8,16 @@
   <body>
 
     <h1>Upload your image</h1>
-    <p>Drag it here</p>
 
     <form method="post" enctype="multipart/form-data" class="upload-area">
-      <p>Drag your file here to upload it</p>
+      <p>Drag it here</p>
+
+      <p>Or click here and upload it</p>
       <!-- csrf token hidden field -->
       %s
       <input name="file" type="file">
       <input type="submit" value="Upload Now">
     </form>
-
 
   </body>
 </html>
