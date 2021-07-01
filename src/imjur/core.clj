@@ -7,8 +7,6 @@
             [ring.middleware.multipart-params :refer [wrap-multipart-params]]
             [ring.middleware.reload :refer [wrap-reload]]
             [ring.util.anti-forgery :refer [anti-forgery-field]]
-            [clojure.pprint :as pp]
-            [clojure.string :as str]
             [clojure.data.json :as json]
             [clojure.java.io :as io])
   (:gen-class))

@@ -15,6 +15,7 @@
                  [org.clojure/data.json "0.2.6"]
                  [org.clojure/clojurescript "1.10.866"]
                  [cljs-http "0.1.46"]
+                 [hipo "0.5.2"]
 
                  ; TODO: split into dev deps
                  [ring/ring-devel "1.8.0"]]

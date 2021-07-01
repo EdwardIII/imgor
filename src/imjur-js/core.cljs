@@ -4,19 +4,43 @@
             [goog.dom.classlist :as gcss]
 
             [cljs-http.client :as http]
-            [cljs.core.async :refer [<!]]
-            [imjur-js.dom :refer [by-css listen]]))
+            [cljs.core.async :refer [<! chan]]
+            [imjur-js.dom :refer [by-css listen]]
+            [hipo.core :as hipo]))
 
 (def upload (atom {:file nil
                    :csrf-token nil}))
+
 (defn uploader
   [_ _ _ upload-request]
-  (go
-    (let [response (<! (http/post "/"
-                                  {:with-credentials? false
-                                   :multipart-params [["__anti-forgery-token" (upload-request :csrf-token)]
-                                                      ["file" (upload-request :file)]]}))])))
-(add-watch upload :file uploader)
+  (println "eh up")
+  (go (let [progress (chan 1)
+            response (http/post "/"
+                                {:with-credentials? false
+                                 :multipart-params [["__anti-forgery-token" (upload-request :csrf-token)]
+                                                    ["file" (upload-request :file)]]
+                                 :progress progress})]
+        (println (<! progress))
+        (println (<! response)))))
+
+(defn file-name-from
+  [upload-request]
+  (.-name (:file upload-request)))
+
+(defn file-size-from
+  [upload-request]
+  (.-size (:file upload-request)))
+
+(defn update-uploads-ui
+  [_ _ _ upload-request]
+  (let [el (hipo/create [:div.uploads
+                         [:p.name (file-name-from upload-request)
+                          [:span.size (str " " (file-size-from upload-request) " bytes" )]]
+                         ])]
+    (.appendChild js/document.body el)))
+
+(add-watch upload :upload-file uploader)
+(add-watch upload :update-ui update-uploads-ui)
 
 (defn get-upload-area [] (by-css ".upload-area"))
 (defn get-csrf-token [] (.-value (by-css "#__anti-forgery-token")))
