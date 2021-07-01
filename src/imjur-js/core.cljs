@@ -1,12 +1,10 @@
 (ns imjur-js.core
-  (:require-macros [cljs.core.async.macros :refer [go]])
-  (:require [goog.events :as gevents]
-            [goog.dom.classlist :as gcss]
-
-            [cljs-http.client :as http]
+  (:require [cljs-http.client :as http]
             [cljs.core.async :refer [<! chan]]
-            [imjur-js.dom :refer [by-css listen]]
-            [hipo.core :as hipo]))
+            [goog.dom.classlist :as gcss]
+            [hipo.core :as hipo]
+            [imjur-js.dom :refer [by-css listen]])
+  (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (def upload (atom {:file nil
                    :csrf-token nil}))

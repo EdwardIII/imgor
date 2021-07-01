@@ -1,15 +1,12 @@
 (ns imjur.core
-  (:require [org.httpkit.server :as server]
+  (:gen-class)
+  (:require [clojure.java.io :as io]
             [compojure.core :refer :all]
             [compojure.route :as route]
+            [org.httpkit.server :as server]
             [ring.middleware.defaults :refer :all]
-            [ring.middleware.params :refer [wrap-params]]
-            [ring.middleware.multipart-params :refer [wrap-multipart-params]]
             [ring.middleware.reload :refer [wrap-reload]]
-            [ring.util.anti-forgery :refer [anti-forgery-field]]
-            [clojure.data.json :as json]
-            [clojure.java.io :as io])
-  (:gen-class))
+            [ring.util.anti-forgery :refer [anti-forgery-field]]))
 
 (def server-config
   {:params {:urlencoded true,
