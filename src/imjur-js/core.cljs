@@ -3,15 +3,37 @@
             [cljs.core.async :refer [<! chan]]
             [goog.dom.classlist :as gcss]
             [hipo.core :as hipo]
-            [imjur-js.dom :refer [by-css listen]])
+            [imjur-js.dom :refer [by-css listen]]
+            [clojure.spec.alpha :as spec])
   (:require-macros [cljs.core.async.macros :refer [go]]))
+
+;lastModified: 1625089304422
+;lastModifiedDate: Wed Jun 30 2021 22:41:44 GMT+0100 (British Summer Time) {}
+;name: "rodrigo-soares-hrO9ZbmGD00-unsplash.jpg"
+;size: 1100534
+;type: "image/jpeg"
+;webkitRelativePath: ""
+(spec/def ::lastModified       number?)
+(spec/def ::lastModifiedDate   any?)
+(spec/def ::name               string?)
+(spec/def ::size               number?)
+(spec/def ::type               string?)
+(spec/def ::webkitRelativePath string?)
+
+(spec/def ::file
+  (spec/keys :req [
+  ::lastModified
+  ::lastModifiedDate
+  ::name
+  ::size
+  ::type
+  ::webkitRelativePath]))
 
 (def upload (atom {:file nil
                    :csrf-token nil}))
 
 (defn uploader
   [_ _ _ upload-request]
-  (println "eh up")
   (go (let [progress (chan 1)
             response (http/post "/"
                                 {:with-credentials? false
