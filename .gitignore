@@ -17,4 +17,5 @@ resources/public/uploads/
 resources/public/javascripts/
 out/
 resources/public/js/
+.rebel_readline_history
 

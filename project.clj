@@ -21,42 +21,33 @@
                  [ring/ring-core "1.9.3"]
                  [ring/ring-jetty-adapter "1.9.3"]]
 
-
   :main ^:skip-aot imjur.core
-  :target-path "target/%s"
-  ; for figwheel
-  :resource-paths ["target/"]
-  :profiles {:dev {:dependencies [[com.bhauman/figwheel-main "0.2.13"]
-                                  [com.bhauman/rebel-readline-cljs "0.1.4"]]}
+  :profiles {:dev 
+             {:dependencies [[com.bhauman/figwheel-main "0.2.13"]
+                             [com.bhauman/rebel-readline-cljs "0.1.4"]
+                                  ;[binaryage/devtools "0.9.0"]
+                              ]
+                   }
+
              :uberjar {:aot :all
-                       :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}}
-
-
-  :cljsbuild {
-                       :builds [ { :id "example" 
-                                  :source-paths ["src/"]
-                                  :figwheel true
-                                  :compiler {  :main "imjur-js.core"
-                                             :asset-path "js/out"
-                                             :output-to "resources/public/js/example.js"
-                                             :output-dir "resources/public/js/out" } } ]
-                       ;{:source-paths ["src"]
-                       ; :compiler {
-                       ;            :output-to "resources/public/javascripts/main.js"
-                       ;            :output-dir "resources/public/javascripts/"
-                       ;            :optimizations :whitespace
-                       ;            :pretty-print true
-                       ;            :source-map "resources/public/javascripts/main.js.map"}}
-                       }
-
-  :figwheel {
-             :ring-handler imjur.core/app
+                       :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}
              }
 
-  :plugins [[lein-cljsbuild "1.1.8"]
-            [lein-figwheel "0.5.18"]]
+  :plugins [[lein-cljsbuild "1.1.8"]]
 
-  :aliases {"fig"       ["trampoline" "run" "-m" "figwheel.main"]
-            "fig:build" ["trampoline" "run" "-m" "figwheel.main" "-b" "imjur" "-r"]
-            })
+  :cljsbuild {
+              :builds [ { :id "min" 
+                         :source-paths ["src"]
+                         :compiler {
+                                    :main "imjur-js.core"
+                                    :target "resources/public/js"
+                                    :asset-path "js/out"
+                                    :output-to "resources/public/js/main.min.js"
+                                    :output-dir "resources/public/js/out"
+                                    :optimizations :advanced}}]}
 
+  :figwheel {:ring-handler imjur.core/app
+             :css-dirs ["resources/public/css"]
+             :repl true}
+
+  :aliases {"fig:build" ["trampoline" "run" "-m" "figwheel.main" "-b" "imjur" "-r"]})

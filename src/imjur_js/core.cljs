@@ -21,20 +21,22 @@
 (spec/def ::webkitRelativePath string?)
 
 (spec/def ::file
-  (spec/keys :req [
-  ::lastModified
-  ::lastModifiedDate
-  ::name
-  ::size
-  ::type
-  ::webkitRelativePath]))
+  (spec/keys :req-un [
+                   ::name
+                   ::size
+                   ::type
+                   ]
+             :opt-un [::lastModified
+                   ::lastModifiedDate
+                   ::webkitRelativePath
+                   ]))
 
 (def upload (atom {:file nil
                    :csrf-token nil}))
 
 (defn uploader
   [_ _ _ upload-request]
-  (go (let [progress (chan 1)
+  (go (let [progress (chan)
             response (http/post "/"
                                 {:with-credentials? false
                                  :multipart-params [["__anti-forgery-token" (upload-request :csrf-token)]
