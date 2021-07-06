@@ -68,6 +68,7 @@
   (let [env (or (System/getenv "IMJUR_ENV") "production")]
     (if (= env "production") #'app-routes #'reloadable-routes)))
 
+(def app (wrap-defaults choose-routes server-config))
 (defn -main
   "Upload images to share on the web"
   [& args]

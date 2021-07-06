@@ -16,3 +16,5 @@ resources/public/uploads/
 !resources/public/uploads/.gitkeep
 resources/public/javascripts/
 out/
+resources/public/js/
+
