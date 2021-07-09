@@ -6,7 +6,9 @@
             [org.httpkit.server :as server]
             [ring.middleware.defaults :refer :all]
             [ring.middleware.reload :refer [wrap-reload]]
-            [ring.util.anti-forgery :refer [anti-forgery-field]]))
+            [ring.util.anti-forgery :refer [anti-forgery-field]]
+            [clojure.spec.alpha :as spec]
+            [clojure.data.json :as json]))
 
 (def server-config
   {:params {:urlencoded true,
@@ -45,14 +47,45 @@
   [req]
   (str "/uploads/" (get-in req [:params :file :filename])))
 
+(spec/def ::filename      string?)
+(spec/def ::content-type  string?)
+(spec/def ::size          (spec/and number? pos?))
+(spec/def ::tempfile      (fn [file](instance? java.io.File file)))
+
+; Example:
+; {:filename "trump.gif"
+; :content-type "image/gif"
+; :tempfile #object[java.io.File 0x3b9855c "/var/folders/6d/wnw21pgn2y90s8y1r7slm1800000gn/T/ring-multipart-2231893712933848300.tmp"]
+; :size 2516456}
+(spec/def ::file
+  (spec/keys :req-un [
+                   ::filename
+                   ::content-type
+                   ::size
+                   ]
+             :opt-un [::tempfile]))
+
+(defn success-response
+  [req]
+    {:status 200
+     :headers  {"Content-Type" "application/json"}
+     :body (json/write-str {:status (str "File now available for download at: http://localhost:3000" (public-uploads-path req))})})
+
+(defn failure-response
+  [req]
+    {:status 422
+     :headers  {"Content-Type" "application/json"}
+     :body (json/write-str {:status "Upload not valid"
+                            :reasons (spec/explain-str ::file (get-in req [:params :file]))})})
+
 (defn upload-handler [req]
   "Save the uploaded file to disk"
   (let [custom-path (upload-destination-path req)]
-  (do
-    (io/copy (io/file (temp-file-path req)) (io/file custom-path))
-    {:status 200
-     :headers  {"Content-Type" "text/html"}
-     :body (str "File now available for download at: http://localhost:3000" (public-uploads-path req))})))
+    (if (spec/valid? ::file (get-in req [:params :file]))
+      (do
+        (io/copy (io/file (temp-file-path req)) (io/file custom-path))
+        (success-response req))
+      (failure-response req))))
 
 (defroutes app-routes
   (GET "/" [] index-handler)
@@ -76,5 +109,4 @@
   (let [port (Integer/parseInt (or (System/getenv "PORT") "3000"))]
     (do
       (server/run-server (wrap-defaults choose-routes server-config) {:port port})
-      (println "Server started on port" port)
-      )))
+      (println "Server started on port" port))))

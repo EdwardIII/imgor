@@ -31,9 +31,16 @@
                    ::webkitRelativePath
                    ]))
 
+; TODO: Keep a collection of files
+{:file {:name :size :type :status}}
+[:in-progress
+:uploaded
+:failed]
+
 (def upload (atom {:file nil
                    :csrf-token nil}))
 
+; TODO: show these nicely in the UI
 (defn uploader
   [_ _ _ upload-request]
   (go (let [progress (chan)
