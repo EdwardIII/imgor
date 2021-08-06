@@ -1,9 +1,52 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Linux Libertine", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, "Times New Roman", serif
+}
+
+.interact-box {
+  margin-bottom: 1em;
+  padding: 1em;
+  width: 100%;
+}
+
 .upload-area {
-  background: deepskyblue;
-  width: 300px;
-  height: 300px;
+  border: 1px solid #000;
+}
+
+.leader {
+  font-size: 1.8em;
+  margin-top: 0;
+}
+
+.notifications-area {
 }
 
 .highlight {
-  background: hotpink;
+  background: #efefef;
+}
+
+.clear-contents {
+  float: right;
+}
+
+.body {
+  display: flex;
+  align-items: center;
+}
+
+.container {
+  margin: 0 auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  max-width: 400px;
+}
+
+.hide {
+  display: none;
 }

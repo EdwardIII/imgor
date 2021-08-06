@@ -2,110 +2,95 @@
   (:require [cljs-http.client :as http]
             [cljs.core.async :refer [<! chan]]
             [goog.dom.classlist :as gcss]
-            [hipo.core :as hipo]
-            [imjur-js.dom :refer [by-css listen]]
+            [goog.dom :as gdom]
+            [imjur-js.dom :refer [by-css listen prevent-defaults]]
+            [imjur-js.file :refer [file-name-from file-size-from]]
+            [imjur-js.ui :refer [upload-request-to-dom]]
             [clojure.spec.alpha :as spec])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
-;lastModified: 1625089304422
-;lastModifiedDate: Wed Jun 30 2021 22:41:44 GMT+0100 (British Summer Time) {}
-;name: "rodrigo-soares-hrO9ZbmGD00-unsplash.jpg"
-;size: 1100534
-;type: "image/jpeg"
-;webkitRelativePath: ""
-(spec/def ::lastModified       number?)
-(spec/def ::lastModifiedDate   any?)
-(spec/def ::name               string?)
-(spec/def ::size               number?)
-(spec/def ::type               string?)
-(spec/def ::webkitRelativePath string?)
+(def uploads
+  "Store uploaded files for use in UI output"
+  (atom {:files {}}))
 
-(spec/def ::file
-  (spec/keys :req-un [
-                   ::name
-                   ::size
-                   ::type
-                   ]
-             :opt-un [::lastModified
-                   ::lastModifiedDate
-                   ::webkitRelativePath
-                   ]))
+(defn update-uploads!
+  "Adds a new file to the existing map of files
+  Expects something like:
+  {file-name.jpg { :file #object[File [object File]]
+                   :progress {,,,}}}
+  "
+  [file-map]
+  (swap! uploads (fn [old-state]
+                   (assoc-in old-state [:files (file-name-from (get file-map :file))] file-map))))
 
-; TODO: Keep a collection of files
-{:file {:name :size :type :status}}
-[:in-progress
-:uploaded
-:failed]
+(defn upload-file!
+  "Upload file to the server.
 
-(def upload (atom {:file nil
-                   :csrf-token nil}))
+  Progress output looks like:
+  {:file #object[File [object File]], :progress {:direction :upload, :loaded 807009, :total 807009}}
 
-; TODO: show these nicely in the UI
-(defn uploader
-  [_ _ _ upload-request]
+  Done output looks like: {:done {:direction :download, :loaded 120, :total 120}, :file #object[File [object File]]}"
+  [file-map csrf-token]
   (go (let [progress (chan)
             response (http/post "/"
                                 {:with-credentials? false
-                                 :multipart-params [["__anti-forgery-token" (upload-request :csrf-token)]
-                                                    ["file" (upload-request :file)]]
+                                 :multipart-params [["__anti-forgery-token" csrf-token]
+                                                    ["file" (get file-map :file)]]
                                  :progress progress})]
-        (println (<! progress))
-        (println (<! response)))))
+        (update-uploads! (assoc file-map :progress (<! progress)))
+        (update-uploads! (assoc file-map :progress (<! progress))))))
 
-(defn file-name-from
-  [upload-request]
-  (.-name (:file upload-request)))
+(defn upload-area [] (by-css ".upload-area"))
+(defn notification-area [] (by-css ".notifications-area"))
+(defn notifications-content [] (by-css ".notifications-content"))
+(defn clear-notifications [] (by-css ".clear-contents"))
+(defn csrf-token [] (.-value (by-css "#__anti-forgery-token")))
 
-(defn file-size-from
-  [upload-request]
-  (.-size (:file upload-request)))
-
-(defn update-uploads-ui
+(defn update-uploads-ui!
   [_ _ _ upload-request]
-  (let [el (hipo/create [:div.uploads
-                         [:p.name (file-name-from upload-request)
-                          [:span.size (str " " (file-size-from upload-request) " bytes" )]]
-                         ])]
-    (.appendChild js/document.body el)))
+  (when (not (empty? (get upload-request :files))) (gcss/remove (notification-area) "hide"))
+  (gdom/removeChildren (notifications-content))
+  (doall (map #(.appendChild (notifications-content) %) (upload-request-to-dom upload-request))))
 
-(add-watch upload :upload-file uploader)
-(add-watch upload :update-ui update-uploads-ui)
-
-(defn get-upload-area [] (by-css ".upload-area"))
-(defn get-csrf-token [] (.-value (by-css "#__anti-forgery-token")))
-
-(defn prevent-defaults
-  [e]
-  (.preventDefault e)
-  (.stopPropagation e))
+(add-watch uploads :update-ui update-uploads-ui!)
 
 (defn on-hover
   [e]
   (prevent-defaults e)
-  (gcss/toggle (get-upload-area) "highlight"))
+  (gcss/toggle (upload-area) "highlight"))
 
 (defn file-from-drag
-  "Get the file that was dragged in from a browser event object"
+  "Get the File object that was dragged in from a browser event object"
   [e]
   (let [files (.. e -dataTransfer -items)]
     (.getAsFile (first (array-seq files)))))
 
+(defn on-click-clear
+  [e]
+  (prevent-defaults e)
+  (gdom/removeChildren (notifications-content)))
+
 (defn on-drop
-  "Upload the dropped file"
+  "Upload the dropped file
+  "
   [e]
   (prevent-defaults e)
   (on-hover e)
-  (reset! upload {:file (file-from-drag e) :csrf-token (get-csrf-token)}))
+  (upload-file! {:file (file-from-drag e)} (csrf-token))
+  (update-uploads! {:file (file-from-drag e)
+                    :progress {}}))
 
 (defn main
   []
-  (listen (get-upload-area) "dragover" prevent-defaults)
-  (listen (get-upload-area) "drag" prevent-defaults)
+  (listen (upload-area) "dragover" prevent-defaults)
+  (listen (upload-area) "drag" prevent-defaults)
 
-  (listen (get-upload-area) "dragenter" on-hover)
-  (listen (get-upload-area) "dragleave" on-hover)
+  (listen (upload-area) "dragenter" on-hover)
+  (listen (upload-area) "dragleave" on-hover)
 
-  (listen (get-upload-area) "drop" on-drop))
+  (listen (upload-area) "drop" on-drop)
+
+  (listen (clear-notifications) "click" on-click-clear))
 
 (listen
   js/window

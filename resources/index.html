@@ -4,21 +4,29 @@
     <title>Imjur</title>
     <link href="/css/main.css" rel="stylesheet">
     <!-- for production: js/main.min.js -->
-    <script src="/js/public/cljs-out/imjur-main.js"></script> 
+    <script src="/js/public/cljs-out/imjur-main.js"></script>
   </head>
   <body>
 
-    <h1>Upload your image</h1>
+    <div class="container">
 
-    <form method="post" enctype="multipart/form-data" class="upload-area">
-      <p>Drag it here</p>
+      <h1>Upload your image</h1>
 
-      <p>Or click here and upload it</p>
-      <!-- csrf token hidden field -->
-      %s
-      <input name="file" type="file">
-      <input type="submit" value="Upload Now">
-    </form>
+      <form method="post" enctype="multipart/form-data" class="upload-area interact-box">
+        <p class="leader">Drag it here</p>
+
+        <p>Or use the form to upload it</p>
+        <!-- csrf token hidden field -->
+        %s
+        <input name="file" type="file">
+        <input type="submit" value="Upload Now">
+      </form>
+
+      <div class="notifications-area interact-box hide">
+        <small><a href="#" class="clear-contents">clear</a></small>
+        <div class="notifications-content"></div>
+      </div>
+    </div>
 
   </body>
 </html>

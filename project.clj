@@ -15,13 +15,15 @@
 
                  ; TODO: split into dev deps
                  [ring/ring-core "1.9.3"]
+                 [ring/ring-devel "1.8.0"]
                  [ring/ring-jetty-adapter "1.9.3"]]
 
   :main ^:skip-aot imjur.core
   :profiles {:dev 
              {:dependencies [[com.bhauman/figwheel-main "0.2.13"]
                              [com.bhauman/rebel-readline-cljs "0.1.4"]
-                                  ;[binaryage/devtools "0.9.0"]
+                             [cider/cider-nrepl "0.26.0"] ; for figwheel repl debugger
+                              ;[binaryage/devtools "0.9.0"]
                               ]
                    }
 
@@ -29,6 +31,8 @@
                        :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}
              }
 
+  ; TODO: Only load "test" in dev mode
+  :source-paths ["src" "test"]
   :plugins [[lein-cljsbuild "1.1.8"]]
 
   :cljsbuild {
@@ -46,4 +50,5 @@
              :css-dirs ["resources/public/css"]
              :repl true}
 
-  :aliases {"fig:build" ["trampoline" "run" "-m" "figwheel.main" "-b" "imjur" "-r"]})
+  :aliases {"fig:build" ["trampoline" "run" "-m" "figwheel.main" "-b" "imjur" "-r"]
+            "fig:test"  ["run" "-m" "figwheel.main" "-co" "test.cljs.edn" "-m" "imjur-js.test-runner"]})
