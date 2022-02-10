@@ -1,6 +1,6 @@
 # imjur
 
-An imjur-like webapp made with Clojure and ClojureScript.
+Upload and share your images. Made with Clojure and ClojureScript.
 
 ## Installation
 
