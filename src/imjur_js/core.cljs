@@ -45,6 +45,7 @@
 (defn notifications-content [] (by-css ".notifications-content"))
 (defn clear-notifications [] (by-css ".clear-contents"))
 (defn csrf-token [] (.-value (by-css "#__anti-forgery-token")))
+()
 
 (defn update-uploads-ui!
   [_ _ _ upload-request]

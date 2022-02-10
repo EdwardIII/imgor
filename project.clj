@@ -21,11 +21,13 @@
   :main ^:skip-aot imjur.core
   :profiles {:dev 
              {:dependencies [[com.bhauman/figwheel-main "0.2.13"]
-                             [com.bhauman/rebel-readline-cljs "0.1.4"]
-                             [cider/cider-nrepl "0.26.0"] ; for figwheel repl debugger
-                              ;[binaryage/devtools "0.9.0"]
-                              ]
-                   }
+
+                             [com.bhauman/rebel-readline-cljs "0.1.4"] ; for figwheel
+
+                             [cider/piggieback "0.4.2"]
+                             [cider/cider-nrepl "0.26.0"]]}
+
+             :repl-options {:nrepl-middleware [cider.piggieback/wrap-cljs-repl]}
 
              :uberjar {:aot :all
                        :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}
@@ -33,7 +35,9 @@
 
   ; TODO: Only load "test" in dev mode
   :source-paths ["src" "test"]
-  :plugins [[lein-cljsbuild "1.1.8"]]
+  ;:resource-paths ["target"]
+  :plugins [[lein-cljsbuild "1.1.8"]
+            [cider/cider-nrepl "0.24.0"]]
 
   :cljsbuild {
               :builds [ { :id "min" 
@@ -46,9 +50,13 @@
                                     :output-dir "resources/public/js/out"
                                     :optimizations :advanced}}]}
 
-  :figwheel {:ring-handler imjur.core/app
-             :css-dirs ["resources/public/css"]
-             :repl true}
+  ;:figwheel {:ring-handler imjur.core/app
+  ;           :css-dirs ["resources/public/css"]
+  ;           :nrepl-port 7888
+  ;           :nrepl-middleware ["cider.nrepl/cider-middleware"
+  ;                              "cemerick.piggieback/wrap-cljs-repl"]
+  ;           :repl true}
 
   :aliases {"fig:build" ["trampoline" "run" "-m" "figwheel.main" "-b" "imjur" "-r"]
-            "fig:test"  ["run" "-m" "figwheel.main" "-co" "test.cljs.edn" "-m" "imjur-js.test-runner"]})
+            "fig:test"  ["run" "-m" "figwheel.main" "-co" "test.cljs.edn" "-m" "imjur-js.test-runner"]}
+  )

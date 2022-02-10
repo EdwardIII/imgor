@@ -3,7 +3,8 @@
   (:require
     ;; require all the namespaces that you want to test
     [imjur-js.core-test]
-    [imjur-js.file-test] 
+    [imjur-js.file-test]
+    [imjur-js.ui-test]
     [figwheel.main.testing :refer [run-tests-async]]))
 
 (defn -main [& args]
