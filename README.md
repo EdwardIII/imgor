@@ -2,6 +2,8 @@
 
 Upload and share your images. Made with Clojure and ClojureScript.
 
+[![imjur](https://circleci.com/gh/EdwardIII/imjur.svg?style=svg)](https://github.com/EdwardIII/imjur)
+
 ## Installation
 
 Clone from (https://github.com/EdwardIII/imjur/)
