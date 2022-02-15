@@ -70,27 +70,29 @@
     {:status 200
      :headers  {"Content-Type" "application/json"}
      :body (json/write-str {:status (str "File now available for download at: http://localhost:3000" (public-uploads-path req))})})
+                                        ;; TODO: Get url dynamically
+
 
 (defn failure-response
   [req]
     {:status 422
      :headers  {"Content-Type" "application/json"}
      :body (json/write-str {:status "Upload not valid"
-                            :reasons (spec/explain-str ::file (get-in req [:params :file]))})})
+                            :reasons (spec/explain-str ::file (get-in req [:params :file]))})}
 
-(defn upload-handler [req]
-  "Save the uploaded file to disk"
-  (let [custom-path (upload-destination-path req)]
-    (if (spec/valid? ::file (get-in req [:params :file]))
-      (do
-        (io/copy (io/file (temp-file-path req)) (io/file custom-path))
-        (success-response req))
-      (failure-response req))))
+  (defn upload-handler [req]
+    "Save the uploaded file to disk"
+    (let [custom-path (upload-destination-path req)]
+      (if (spec/valid? ::file (get-in req [:params :file]))
+        (do
+          (io/copy (io/file (temp-file-path req)) (io/file custom-path))
+          (success-response req))
+        (failure-response req))))
 
-(defroutes app-routes
-  (GET "/" [] index-handler)
-  (POST "/" [] upload-handler)
-  (route/not-found "Error, page not found!"))
+  (defroutes app-routes
+    (GET "/" [] index-handler)
+    (POST "/" [] upload-handler)
+    (route/not-found "Error, page not found!")))
 
 (def reloadable-routes
   "Reload application if files are changed"
