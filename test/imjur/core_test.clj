@@ -42,3 +42,6 @@ Example: (assert-contains \"expected\" \"actual\")"
                              :body
                              json/read-str
                              (get "status"))))))
+
+(t/deftest always-fail (t/is (= true false))
+  )
